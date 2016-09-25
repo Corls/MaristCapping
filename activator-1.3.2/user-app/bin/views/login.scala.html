@@ -1,0 +1,17 @@
+<form id="login-form">
+	<div><input id="log-name" name="name" type="text" maxlength="50"></div>
+	<div><input id="log-pass" name="pass" type="text" maxlength="50"></div>
+</form>
+<button id="auth-me" onclick="ajaxAuth()">Login</button>
+<div id="login-error"></div>
+<script>
+	function ajaxAuth() {
+		var login = $("#login-form").serialize();
+		$.post("@routes.Application.auth()", login).done(function(data) {
+			document.getElementById("user-bar").innerHTML = data;
+			stage--;
+		}).fail(function(dis, dat, andose) {
+			document.getElementById("login-error").innerHTML = dis.responseText;
+		});
+	}
+</script>

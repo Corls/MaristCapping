@@ -1,0 +1,18 @@
+@(mForm: Form[model.Model])(id: Integer)(tbl: String)
+@import assistants.RefConn
+
+@if(mForm.hasGlobalErrors) {
+	<div class="error">@mForm.globalError.message</div>
+}
+@defining(RefConn.getModelInstance(RefConn.getModelClass(tbl), null)) { m =>
+	@defining(m.getDisplayNames()) { display =>
+		@defining(m.getFieldNames()) { fields =>
+			@helper.form(action = controllers.routes.Application.updateInfo(id, RefConn.getRefFor(m)), 'id -> "update-form") {
+				@for(i <- 1 to fields.length) {
+					@helper.inputText(mForm(fields(i-1)), '_label -> display(i-1).concat(":"), 'maxlength -> 50)
+				}
+			}
+		}
+	}
+	<button onclick="submitIt('update-form','@routes.Application.updateInfo(id, RefConn.getRefFor(m))')">Submit</button>
+}

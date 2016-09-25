@@ -1,0 +1,20 @@
+@(refresh: Integer)
+@import assistants.RefConn
+
+@main("Welcome to Play") {
+    <h3>Welcome to Play</h3>
+    <div>
+	    <select id="table-select" onchange="displayTable()">
+	    	<option value="default">--Tables--</option>
+	    	@for(c <- RefConn.getTables()) {
+	    		@defining(RefConn.getModelInstance(c, null)) { m =>
+	    			@if(m != null) {
+	    				<option value="@routes.Application.indexTable(RefConn.getRefFor(m), refresh)">@RefConn.getDisplayName(m)</option>
+	    			}
+	    		}
+	    	}
+	    </select>
+	    Select a table
+    </div>
+	<div id="table-display"></div>
+}

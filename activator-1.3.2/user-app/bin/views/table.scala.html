@@ -1,0 +1,30 @@
+@(models: List[model.Model])
+@import assistants.RefConn
+
+<table>
+	@if(models.size() > 0) {
+		<tr>
+			@for(field <- models(0).getDisplayNames()) {
+				<th>@field</th>
+			}
+			<th>Options</th>
+		</tr>
+		@for(m <- models) {
+			<tr>
+				@for(field <- m.getValues()) {
+					<td>@field.replace("'","")</td>
+				}
+				<td>
+					@defining(RefConn.getRefFor(m)) { tbl =>
+					<a href="@routes.Application.getInfo(m.getModelId(), tbl)">Update</a>
+					<a href="@routes.Application.remove(m.getModelId(), tbl)">Delete</a>
+					}
+				</td>
+			</tr>
+		}
+	} else {
+		<tr>
+			<td>No Results</td>
+		</tr>
+	}
+</table>

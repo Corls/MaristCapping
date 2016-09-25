@@ -1,0 +1,17 @@
+@(models: List[model.Model])(refresh: Integer)
+@import assistants.RefConn
+
+<br>
+<div id="tamaya">@table.render(models)</div>
+@defining(RefConn.getRefFor(models(0))) { tname =>
+	<button onclick="getForm('@routes.Application.getInfo(-1, tname)')">Add</button>
+	<button onclick="getForm('@routes.Application.search(tname)')">Search</button>
+	<div id="table-form"></div>
+	@if(refresh > 0) {
+		<script>
+			$(function() {
+				setCheck("@routes.Application.getTable(tname)", @refresh);
+			});
+		</script>
+	}
+}
