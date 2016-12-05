@@ -14,7 +14,7 @@ import play.mvc.*;
 import views.html.*;
 
 public class JAPP extends Controller {
-	@BodyParser.Of(BodyParser.Json.class)
+	/*@BodyParser.Of(BodyParser.Json.class)
 	public static Result index() {
 		JsonNode params = request().body().asJson();
 		List<Model> mList = null;
@@ -122,7 +122,7 @@ public class JAPP extends Controller {
 		}
 		format += "\n\nhttp://localhost:9000/remove/:id\nid: Integer\noptions:";
 		return ok(format + "\n");
-	}
+	}*/
 }
 /*
  * curl -H "Content-type: application/json" -X POST -d "{}" http://localhost:9000/json/

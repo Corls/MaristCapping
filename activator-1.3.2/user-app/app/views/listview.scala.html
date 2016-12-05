@@ -1,0 +1,17 @@
+@(category: String)(items: List[model.Products])
+<!DOCTYPE html>
+    <html class="no-js">
+    <head>
+        <meta charset="utf-8"/>
+        <title>River+Stone</title>
+
+        <!-- EXTERNAL HEADER/FOOTER CSS FILE -->
+        <link href="@routes.Assets.at("stylesheets/home.css")" rel="stylesheet" type="text/css"/>
+    </head>
+    <body id="generic-homepage">
+        @navigation()
+        <main id="content" role="main">
+            @content(category)("")(items)
+        </main>
+    </body>
+</html>

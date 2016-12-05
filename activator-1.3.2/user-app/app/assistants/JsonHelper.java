@@ -1,7 +1,6 @@
 package assistants;
 
 import model.Model;
-import model.User;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -15,7 +14,7 @@ public class JsonHelper {
 		}
 	}
 	private static Object[] parseJsonObject(JsonNode json, Model model) {
-		boolean isUpdate = model.getModelId() >= 0;
+		boolean isUpdate = !model.getModelId().isEmpty();
 		String[] fields = model.getFieldNames();
 		String[] values = model.getValues();
 		Object[] parsed = new Object[values.length + 1];
@@ -36,7 +35,7 @@ public class JsonHelper {
 		return parsed;
 	}
 	private static Object[] parseJsonArray(JsonNode json, Model model) {
-		boolean isUpdate = model.getModelId() >= 0;
+		boolean isUpdate = !model.getModelId().isEmpty();
 		String[] values = model.getValues();
 		Object[] parsed = new Object[values.length + 1];
 		if(json.size() < values.length) {

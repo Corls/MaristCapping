@@ -1,0 +1,28 @@
+@(title: String)(exploreUrl: String)(items: List[model.Products])
+<!--(loadSize: Int)-->
+
+<!-- ITEM BEING DISPLAYED/NAME/PRICE -->
+<article class="other-content">
+    <div class="boutiques-content">
+        <a class="explore-link" href="@exploreUrl">
+            <h1>@title</h1>
+        </a>
+        <div class="boutiques-container">
+            <ul class="boutiques">
+                @for(item <- items) {
+                    <li>
+                        <a href="">
+                            <figure>
+                                <img src="@routes.Assets.at("images/"+item.imgUrl)"/>
+                                <figcaption>
+                                    @item.description
+                                    <span>$@item.retailPrice</span>
+                                </figcaption>
+                            </figure>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</article>

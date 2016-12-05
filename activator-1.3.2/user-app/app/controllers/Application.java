@@ -1,17 +1,19 @@
 package controllers;
 
-import java.io.File;
-import java.util.Arrays;
-
 import assistants.*;
 import model.*;
 import play.data.*;
 import play.mvc.*;
 import views.html.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 public class Application extends Controller {
     public static Result index(Integer refresh, Integer display, Integer page) {
-		Class<? extends Model> c = RefConn.getModelClass("user");
+		Class<? extends Model> c = RefConn.getModelClass("accounts");
 		if(c == null) {
 			return internalServerError("We are currently experiencing technical problems. We apologize for the inconvinience.");
 		}
@@ -22,34 +24,96 @@ public class Application extends Controller {
     	return ok(welcome.render(refresh));
 	    //return ok(index.render(QueryGenerator.getModels(c, "", display, page), (refresh * 1000)));
     }
-    
+
+    public static Result home() {
+        List<Products> prods = new ArrayList<>();
+        QueryGenerator.getAll(Products.class, "pid < 4").forEach(model -> {
+            if(model instanceof Products) {
+                prods.add((Products) model);
+            }
+        });
+        return ok(home.render(prods));
+    }
+    public static Result list(String category) {
+        String where = "";
+        if(!category.isEmpty()) try {
+            where = "categoryId = " + QueryGenerator.getModel(ProductCategory.class, "category = '" + category + "'").getModelId();
+        } catch(NullPointerException e) {
+            return badRequest("Invalid Collection");
+        }
+        List<Products> prods = new ArrayList<>();
+        QueryGenerator.getAll(Products.class, where).forEach(model -> {
+            if(model instanceof Products) {
+                prods.add((Products) model);
+            }
+        });
+        return ok(listview.render((category.isEmpty() ? "Full River+Stone Collection" : category), prods));
+    }
+
     public static Result curUser() {
     	if(session("curUser") == null) {
     		return ok("Login");
     	}
-    	return ok(session("curUser"));
+		return ok(session("curUser"));
     }
-    
+
+    public static Result register() { return ok(views.html.forms.register.render()); }
+    public static Result createAccount() {
+        String errors = "";
+        DynamicForm userForm = Form.form().bindFromRequest();//login.get("email")
+        if(QueryGenerator.getModel(Accounts.class, "email = '" + userForm.get("email") + "'") != null) {
+            errors += "Email already exists. ";
+        }
+        if(QueryGenerator.getModel(Accounts.class, "username = '" + userForm.get("username") + "'") != null) {
+            errors += "Username already exists. ";
+        }
+        if(!errors.isEmpty()) {
+            return badRequest(errors);
+        }
+        Accounts user = new Accounts();
+        user.accountId = QueryGenerator.count(Accounts.class)+1;
+        user.username = userForm.get("username");
+        user.email = userForm.get("email");
+        user.password = SSPEncryptor.encriptMe(userForm.get("ssp"));
+        if(!QueryGenerator.add(user)) {
+            return internalServerError("Something went wrong.");
+        }
+        session("curUser", user.username);
+        return ok(user.username);
+    }
     public static Result login() {
     	return ok(login.render());
     }
     public static Result auth() {
     	DynamicForm login = Form.form().bindFromRequest();
-    	String check = "screenName = \"" + login.get("name") + "\"";
-    	User user = (User) QueryGenerator.getModel(User.class, check);
-    	check = login.get("pass");
+    	String check = "email = '" + login.get("email") + "'";
+		Accounts user = (Accounts) QueryGenerator.getModel(Accounts.class, check);
+    	check = login.get("ssp");
     	if(user == null) {
     		return badRequest("Invalid Username");
     	}
-    	else if(check == null || !SSPEncryptor.test(check, user.ssp)) {
+    	else if(check == null || !SSPEncryptor.test(check, user.password)) {
     		return badRequest("Invalid Password");
     	}
-    	session("curUser", user.screenName);
-    	return ok(user.screenName);
+    	session("curUser", user.username);
+        return ok(user.username);
     }
     public static Result logout() {
     	session().remove("curUser");
-    	return ok("Anonymous");
+        return redirect("/home/");
+    }
+
+    public static Result updateCart(String newCart) {
+        session("cart", newCart);
+        return ok(newCart);
+    }
+    public static Result loadCart() {
+        String cart = session().getOrDefault("cart", "");
+        List<Products> purchases;
+        Arrays.stream(cart.split("-")).forEach(item -> {
+            String[] b = item.split(":");
+        });
+        return ok();
     }
     
     public static Result indexTable(String tableName, Integer refresh) {
@@ -81,13 +145,13 @@ public class Application extends Controller {
     	return ok("1");
     }
     
-    public static Result getInfo(Integer id, String tableName) {
+    public static Result getInfo(String id, String tableName) {
     	Class<? extends Model> c = RefConn.getModelClass(tableName);
     	if(c == null) {
     		return badRequest("Table " + tableName + " does not exist.");
     	}
     	Form<Model> mForm = (Form<Model>) Form.form(c);
-    	if (id >= 0) {
+    	if (!id.isEmpty()) {
         	Model model = QueryGenerator.getModelById(c, id);
         	if(model == null) {
         		return redirect("/info/");
@@ -98,7 +162,7 @@ public class Application extends Controller {
     	//return ok(RefConn.getFormByName(tableName, new Object[]{mForm, id}));
     }
     
-    public static Result updateInfo(Integer id, String tableName) {
+    public static Result updateInfo(String id, String tableName) {
     	Class<? extends Model> c = RefConn.getModelClass(tableName);
     	if(c == null) {
     		return badRequest("Table " + tableName + " does not exist.");
@@ -108,10 +172,10 @@ public class Application extends Controller {
     		return badRequest(mform.render(mForm, id, tableName));
     	}
 		Model model = mForm.get();
-		if(model instanceof User) {
-			((User) model).ssp = SSPEncryptor.encriptMe(((User) model).ssp);
+		if(model instanceof Accounts) {
+			((Accounts) model).password = SSPEncryptor.encriptMe(((Accounts) model).password);
 		}
-    	if(id < 0) {
+    	if(id.isEmpty()) {
     		if(!QueryGenerator.add(model)) {
     			return internalServerError("Insert failed.");
     		}
@@ -124,7 +188,7 @@ public class Application extends Controller {
     	return indexTable(tableName, new Integer(session("r")));
     }
     
-    public static Result remove(Integer id, String tableName) {
+    public static Result remove(String id, String tableName) {
     	Class<? extends Model> c = RefConn.getModelClass(tableName);
     	if(c == null) {
     		badRequest("Table " + tableName + " does not exist");

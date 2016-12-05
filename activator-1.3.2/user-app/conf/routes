@@ -2,31 +2,39 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           controllers.Application.index(r: Integer ?= 1, d: Integer = 10, p: Integer = 1)
-GET     /:p                         controllers.Application.index(r: Integer ?= 1, d: Integer = 10, p: Integer)
+#Table View Pages
+GET     /                           controllers.Application.index(r: Integer ?= 1, d: Integer ?= 10, p: Integer = 1)
+GET     /:p                         controllers.Application.index(r: Integer ?= 1, d: Integer ?= 10, p: Integer)
 GET     /t/:model                   controllers.Application.indexTable(model: String, r: Integer ?= 1)
 GET     /table/:model               controllers.Application.getTable(model: String)
 GET     /table/:model/ch/           controllers.Application.checkTable(model: String)
-GET     /info/:model                controllers.Application.getInfo(id: Integer = -1, model: String)
-GET     /info/:model/:id            controllers.Application.getInfo(id: Integer, model: String)
-POST    /update/:model              controllers.Application.updateInfo(id: Integer = -1, model: String)
-POST    /update/:model/:id          controllers.Application.updateInfo(id: Integer, model: String)
-GET     /remove/:model/:id          controllers.Application.remove(id: Integer, model: String)
-POST    /remove/:model/:id          controllers.Application.remove(id: Integer, model: String)
+GET     /info/:model                controllers.Application.getInfo(id: String = "-1", model: String)
+GET     /info/:model/:id            controllers.Application.getInfo(id: String, model: String)
+POST    /update/:model              controllers.Application.updateInfo(id: String = "-1", model: String)
+POST    /update/:model/:id          controllers.Application.updateInfo(id: String, model: String)
+GET     /remove/:model/:id          controllers.Application.remove(id: String, model: String)
+POST    /remove/:model/:id          controllers.Application.remove(id: String, model: String)
 GET     /search/:model              controllers.Application.search(model: String)
 POST    /result/:model              controllers.Application.searchInfo(model: String)
-GET     /login/                     controllers.Application.login()
 POST    /login/                     controllers.Application.auth()
+GET     /logout/                    controllers.Application.logout()
+
+#Client View Pages
+GET     /home/                      controllers.Application.home()
+GET     /home/createAccount         controllers.Application.register()
+POST    /home/createAccount         controllers.Application.createAccount()
+GET     /home/login                 controllers.Application.login()
+GET     /collection/                controllers.Application.list(category: String = "")
+GET     /collection/:category       controllers.Application.list(category: String)
 
 #JSON
-POST    /json/                      controllers.JAPP.index()
-GET     /json/:model                controllers.JAPP.getTable(model: String)
-POST    /json/:model                controllers.JAPP.getTable(model: String)
-GET     /json/help/                 controllers.JAPP.getFormats()
-POST    /json/help/                 controllers.JAPP.getFormats()
-POST    /json/update/:model/        controllers.JAPP.update(id: Integer = -1, model: String)
-POST    /json/update/:model/:id     controllers.JAPP.update(id: Integer, model: String)
+#POST    /json/                      controllers.JAPP.index()
+#GET     /json/:model                controllers.JAPP.getTable(model: String)
+#POST    /json/:model                controllers.JAPP.getTable(model: String)
+#GET     /json/help/                 controllers.JAPP.getFormats()
+#POST    /json/help/                 controllers.JAPP.getFormats()
+#POST    /json/update/:model/        controllers.JAPP.update(id: Integer = -1, model: String)
+#POST    /json/update/:model/:id     controllers.JAPP.update(id: Integer, model: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

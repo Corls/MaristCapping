@@ -1,14 +1,10 @@
 package assistants;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
 
 import org.reflections.Reflections;
 
-import play.data.Form;
-import play.twirl.api.Html;
 import model.Model;
-import model.User;
 
 public class RefConn {
 	public static Class<? extends Model> getModelClass(String name) {

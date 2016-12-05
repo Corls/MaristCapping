@@ -8,17 +8,16 @@ import java.util.Map;
 import java.util.Set;
 
 import model.Model;
-import model.User;
 
 public class QueryGenerator {
-	public static <T extends Model> T getModelById(Class<T> c, Integer id) {
+	public static <T extends Model> T getModelById(Class<T> c, String id) {
 		T t = null;
 		try {
-			Model model = (Model) c.newInstance();
-			String selectQuery = "SELECT * FROM " + model.getTableName() + " WHERE id = " + id;
+			Model model = c.newInstance();
+			String selectQuery = "SELECT * FROM " + model.getTableName() + " WHERE " + model.getModelKey() + " = " + id;
 			List<Object[]> results = Database.getData(selectQuery, model.getFieldCount());
 			if(!results.isEmpty()) {
-				t = (T) c.getDeclaredConstructor(Object[].class).newInstance(new Object[] {results.get(0)});
+				t = c.getDeclaredConstructor(Object[].class).newInstance(new Object[] {results.get(0)});
 			}
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
@@ -38,11 +37,11 @@ public class QueryGenerator {
 	}
 	
 	public static List<Model> getModels(Class<? extends Model> c, String where, Integer show, Integer page) {
-		List<Model> mList = new ArrayList<Model>();
+		List<Model> mList = new ArrayList<>();
 		Integer start = show * (page-1);
 		Integer end = start + show;
 		try {
-			Model model = (Model) c.newInstance();
+			Model model = c.newInstance();
 			String selectQuery = "SELECT * FROM " + model.getTableName() + (where.isEmpty() ? "" : " WHERE " + where);
 			List<Object[]> results = Database.getData(selectQuery, model.getFieldCount());
 			if(results.size() < end) {
@@ -50,7 +49,7 @@ public class QueryGenerator {
 			}
 			for(int i = start; i < end; i++) {
 				Object[] t = results.get(i);
-				mList.add((Model) c.getDeclaredConstructor(Object[].class).newInstance(new Object[] {t}));
+				mList.add(c.getDeclaredConstructor(Object[].class).newInstance(new Object[] {t}));
 			}
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
@@ -61,13 +60,13 @@ public class QueryGenerator {
 	}
 	
 	public static List<Model> getAll(Class<? extends Model> c, String where) {
-		List<Model> mList = new ArrayList<Model>();
+		List<Model> mList = new ArrayList<>();
 		try {
-			Model model = (Model) c.newInstance();
+			Model model = c.newInstance();
 			String selectQuery = "SELECT * FROM " + model.getTableName() + (where.isEmpty() ? "" : " WHERE " + where);
-			List<Object[]> results = Database.getData(selectQuery, model.getFieldCount());
+            List<Object[]> results = Database.getData(selectQuery, model.getFieldCount());
 			for(Object[] t : results) {
-				mList.add((Model) c.getDeclaredConstructor(Object[].class).newInstance(new Object[] {t}));
+				mList.add(c.getDeclaredConstructor(Object[].class).newInstance(new Object[] {t}));
 			}
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
@@ -80,7 +79,7 @@ public class QueryGenerator {
 	public static Integer count(Class<? extends Model> c) {
 		Integer result = 0;
 		try {
-			Model model = (Model) c.newInstance();
+			Model model = c.newInstance();
 			String countQuery = "SELECT COUNT(*) FROM " + model.getTableName();
 			result = Database.count(countQuery);
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -98,21 +97,21 @@ public class QueryGenerator {
 		return Database.update(insertQuery);
 	}
 	
-	public static boolean update(Model model, Integer id) {
+	public static boolean update(Model model, String id) {
 		String[] names = model.getFieldNames();
 		String[] values = model.getValues();
 		String set = "";
 		for(int i = 0; i < names.length; i++) {
 			set += "," + names[i] + " = " + values[i];
 		}
-		String updateQuery = "UPDATE " + model.getTableName() + " SET " + set.substring(1) + " WHERE id = " + id;
+		String updateQuery = "UPDATE " + model.getTableName() + " SET " + set.substring(1) + " WHERE " + model.getModelKey() + " = " + id;
 		return Database.update(updateQuery);
 	}
 	
-	public static boolean remove(Class<? extends Model> c, Integer id) {
+	public static boolean remove(Class<? extends Model> c, String id) {
 		try {
-			Model model = (Model) c.newInstance();
-			String deleteQuery = "DELETE FROM " + model.getTableName() + " WHERE id = " + id;
+			Model model = c.newInstance();
+			String deleteQuery = "DELETE FROM " + model.getTableName() + " WHERE " + model.getModelKey() + " = " + id;
 			return Database.update(deleteQuery);
 		} catch (InstantiationException | IllegalAccessException e) {
 			//e.printStackTrace();

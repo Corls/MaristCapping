@@ -1,0 +1,29 @@
+
+<!--
+  -- Idea: ParentCategoryIds
+ -->
+
+<nav id="site-nav" role="navigation">
+    <a href="@routes.Application.home()"><h1>R+S</h1></a>
+    <ul id="menu" class="nav">
+        @navtab("Womens")("Bags & Purses", "Coats & Jackets", "Dresses", "Jeans", "Pants & Leggings", "Shirts & Blouses", "Shoes", "Shorts & Skirts", "Swimwear", "Tops & T-Shirts")
+        @navtab("Mens")("Hoodies & Sweatshirts", "Jeans", "Pants & Shorts", "Shirts", "Shoes", "T-Shirts", "Polos", "Swimwear")
+        @navtab("Kids")()
+        @navtab("Our Story")()
+        @navtab("Collections")()
+    </ul>
+</nav>
+
+<!-- LINKS TO SIGN IN & SIGN UP PAGE -->
+<div id="currency">
+    <span>Welcome, </span>
+    @if(!session().containsKey("curUser")) {
+    <a href="@routes.Application.login()"><span>Sign in</span></a>
+    <span> | </span>
+    <a href="@routes.Application.register()"><span>Sign up</span></a>
+    } else {
+    <a href="javascript:void(0);"><span>@session.get("curUser")</span></a>
+    <span> | </span>
+    <a href="@routes.Application.logout()"><span>Sign out</span></a>
+    }
+</div>

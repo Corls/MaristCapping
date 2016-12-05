@@ -15,19 +15,14 @@ import play.db.DB;
 
 public class Database {
 	public static List<Object[]> getData(String query, int fields) {
-		List<Object[]> results = new ArrayList<Object[]>();
-		Statement stmt = null;
-		ResultSet rs = null;
+		List<Object[]> results = new ArrayList<>();
 		try {
 			//Establish the Connection
     		Connection conn = DB.getConnection();
-			
 			//Create the Statement
-			stmt = conn.createStatement();
-			
+            Statement stmt = conn.createStatement();
 			//Execute the Statement
-			rs = stmt.executeQuery(query);
-			
+            ResultSet rs = stmt.executeQuery(query);
 			//Process the ResultSet
 			while(rs.next()) {
 				Object[] result = new Object[fields];
@@ -36,6 +31,7 @@ public class Database {
 				}
 				results.add(result);
 			}
+			//End Connection
 			rs.close();
 			conn.close();
 		} catch (SQLException e) {

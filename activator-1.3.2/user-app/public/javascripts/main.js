@@ -30,7 +30,7 @@ function setCheck(theUrl, refresh) {
 			}
 		});
 	},refresh);
-});
+};
 
 function submitIt(fid, url) {
 	var search = $("#" + fid).serialize();

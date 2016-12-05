@@ -1,0 +1,58 @@
+@(items: List[model.Products])
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8"/>
+        <title>River+Stone</title>
+
+        <!-- EXTERNAL HEADER/FOOTER CSS FILE -->
+        <link href="@routes.Assets.at("stylesheets/home.css")" rel="stylesheet" type="text/css"/>
+    </head>
+    <body id="generic-homepage">
+
+        @navigation()
+
+        <main id="content" role="main">
+            <!-- SEARCH BAR -->
+            <div id="search-container" role="search">
+                <form action="/search" class="cf" id="search" method="get">
+                    <fieldset>
+                        <legend class="hidden">Search River+Stone Gallery</legend>
+                        <div class="searchForm">
+                            <input autocomplete="off" class="hint" id="q" name="q" type="text" placeholder="Search River+Stone Collection"/>
+                            <input id="oss_ss" name="oss_ss" type="hidden" value=""/>
+                            <input id="mpwa_searchIsSuggested" name="mpwa_searchIsSuggested" type="hidden" value=""/>
+                            <input id="btnSearch" type="submit" value="Go"/>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- IMAGE SLIDER -->
+            <article class="carousel">
+                <section class="fixed-text" >
+                    <span class="heading">Shop directly </span>
+                    <span class="heading">from our </span>
+                    <span class="heading">River+Stone </span>
+                    <span class="heading">fashion boutique.</span>
+                    <ul>
+                        <li><a href="" class="women">Shop Women<span>&rsaquo;</span></a></li>
+                        <li><a href="" class="men">Shop Men<span>&rsaquo;</span></a></li>
+                        <li><a href="" class="">Shop Kids<span>&rsaquo;</span></a></li>
+                    </ul>
+                </section>
+
+                <article class="slides cycle-slideshow" >
+                    <section class="slide boutique-slide-2" data-slide-num="1">
+                    </section>
+                </article>
+            </article>
+
+            @content("River+Stone Collection")("")(items)
+
+        </main>
+
+        @footer()
+
+    </body>
+</html>

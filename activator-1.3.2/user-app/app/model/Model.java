@@ -8,24 +8,24 @@ import assistants.QueryGenerator;
 
 import com.fasterxml.jackson.databind.ser.std.NumberSerializers.NumberSerializer;
 
-public class Model {
-	private int modelId;
+public abstract class Model {
 	private String tableName;
-	
-	public Model(String name, int id) {
+	private String modelKey;
+
+	public Model(String name, String pkFieldName) {
 		tableName = name;
-		modelId = id;
+        modelKey = pkFieldName;
 	}
-	
+
 	public String getTableName() {
 		return tableName;
 	}
-	public int getModelId() {
-		return modelId;
-	}
+	public String getModelKey() { return modelKey; }
+    public abstract String getModelId();
 	public int getFieldCount() {
-		return this.getClass().getFields().length + 1;
+		return this.getClass().getFields().length;
 	}
+
 	public String[] getFieldNames() {
 		Field[] fields = this.getClass().getFields();
 		String[] names = new String[fields.length];
@@ -52,7 +52,7 @@ public class Model {
 					values[i] = "'" + check + "'";
 				}
 				else {
-					values[i] = "" + check;
+					values[i] = check.toString();
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				values[i] = "";
@@ -69,11 +69,6 @@ public class Model {
 		else {
 			where += fieldValue;
 		}
-		if(QueryGenerator.getModel(this.getClass(), where) == null) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return QueryGenerator.getModel(this.getClass(), where) == null;
 	}
 }
