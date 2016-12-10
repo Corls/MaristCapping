@@ -1,0 +1,21 @@
+@(item: model.Products)
+<div class="basket-product">
+    <div class="item">
+        <div class="product-image">
+            <img src="@routes.Assets.at("images/"+item.image)" alt="Placholder Image" class="product-frame">
+        </div>
+        <div class="product-details">
+            <span class="item-name">@item.product</span>
+            <p><strong>@item.description</strong></p>
+            <p>@item.pid</p>
+        </div>
+    </div>
+    <div class="price">@item.retailPrice</div>
+    <div class="quantity">
+        <input type="number" value="@item.qtySold" min="1" class="quantity-field">
+    </div>
+    <div class="subtotal">@(item.qtySold * item.retailPrice.doubleValue())</div>
+    <div class="remove1">
+        <button>Remove</button>
+    </div>
+</div>

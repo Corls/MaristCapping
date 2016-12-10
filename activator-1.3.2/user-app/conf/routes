@@ -26,6 +26,8 @@ POST    /home/createAccount         controllers.Application.createAccount()
 GET     /home/login                 controllers.Application.login()
 GET     /collection/                controllers.Application.list(category: String = "")
 GET     /collection/:category       controllers.Application.list(category: String)
+GET     /cart/update/:newCart       controllers.Application.updateCart(newCart: String)
+GET     /cart/view                  controllers.Application.loadCart()
 
 #JSON
 #POST    /json/                      controllers.JAPP.index()

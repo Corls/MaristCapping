@@ -108,12 +108,19 @@ public class Application extends Controller {
         return ok(newCart);
     }
     public static Result loadCart() {
-        String cart = session().getOrDefault("cart", "");
-        List<Products> purchases;
-        Arrays.stream(cart.split("-")).forEach(item -> {
-            String[] b = item.split(":");
-        });
-        return ok();
+        String purchases = session().getOrDefault("cart", "");
+        List<Products> items = new ArrayList<>();
+        if(!purchases.isEmpty()) {
+            Arrays.stream(purchases.split("-")).forEach(purchase -> {
+                String[] b = purchase.split(":");
+                Products item = QueryGenerator.getModelById(Products.class, b[0]);
+                try {
+                    item.qtySold = Integer.parseInt(b[1]);
+                    items.add(item);
+                } catch (NumberFormatException ignore) {}
+            });
+        }
+        return ok(cart.render(items));
     }
     
     public static Result indexTable(String tableName, Integer refresh) {

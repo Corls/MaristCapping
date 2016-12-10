@@ -1,19 +1,13 @@
-@(tab: String)(categories: String*)
+@(tab: String)
 
 <!-- @{tab.toUpperCase()} TAB -->
 <li class="@{tab.replaceAll(" ", "_").toLowerCase()}">
     <a class="tab" href="@routes.Application.list(tab)">
-        <span >@tab</span>
+        <span>@tab</span>
     </a>
     <div class="panel boxShadow" style="width:180px;">
         <div class="divider">
             <h3>SHOP BY PRODUCT</h3>
-            <ul>
-                @for(cat <- categories) {
-                    <li><a href=""><b>@cat</b></a></li>
-                }
-                <li></li>
-            </ul>
         </div>
     </div>
 </li>
